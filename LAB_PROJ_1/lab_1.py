@@ -97,7 +97,7 @@ class Ui_MainWindow(object):
         self.button_coma.setSizePolicy(sizePolicy)
         self.button_coma.setObjectName("button_coma")
         self.gridLayout.addWidget(self.button_coma, 4, 1, 1, 1)
-        self.button_clear = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.button_clear = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_but('C'))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -213,7 +213,10 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def press_but(self, pressed):
-        self.label.setText(pressed)
+        if pressed == 'C':
+            self.label.setText('')
+        else: 
+            self.label.setText(f'{self.label.text()}{pressed}')
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
