@@ -89,7 +89,7 @@ class Ui_MainWindow(object):
         self.button_5.setSizePolicy(sizePolicy)
         self.button_5.setObjectName("button_5")
         self.gridLayout.addWidget(self.button_5, 2, 1, 1, 1)
-        self.button_coma = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_but('.'))
+        self.button_coma = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_dot())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -113,7 +113,7 @@ class Ui_MainWindow(object):
         self.button_0.setSizePolicy(sizePolicy)
         self.button_0.setObjectName("button_0")
         self.gridLayout.addWidget(self.button_0, 4, 0, 1, 1)
-        self.button_eq = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_but('='))
+        self.button_eq = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_eq())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -121,7 +121,7 @@ class Ui_MainWindow(object):
         self.button_eq.setSizePolicy(sizePolicy)
         self.button_eq.setObjectName("button_eq")
         self.gridLayout.addWidget(self.button_eq, 5, 0, 1, 1)
-        self.button_del = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_but('D'))
+        self.button_del = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_del())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -201,7 +201,7 @@ class Ui_MainWindow(object):
         self.label.setLineWidth(2)
         self.label.setFont(QFont('Arial', 40))
         self.label.setAlignment(QtCore.Qt.AlignRight)
-        self.label.setText("")
+        self.label.setText("0")
         self.label.setTextFormat(QtCore.Qt.AutoText)
         self.label.setScaledContents(False)
         self.label.setWordWrap(False)
@@ -220,14 +220,45 @@ class Ui_MainWindow(object):
         self.checkBox_2.toggled['bool'].connect(self.lcdNumber_2.setVisible) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    #równa się 
+    def press_eq(self):
+        screen = self.label.text()
+        try:
+            answer = eval(screen)
+            self.label.setText(str(answer))
+        except:
+            self.label.setText('ERROR AAAAA')
+
+
+    #usuwanie jednej cyfry
+    def press_del(self):
+        screen = self.label.text()
+        if len(screen) == 1:
+            self.label.setText('0')
+        else:
+            screen = screen[:-1]
+            self.label.setText(f'{screen}')
+
+    #dodałem kropkę
+    def press_dot(self):
+        screen = self.label.text()
+        if screen[-1] == '.':
+            pass 
+        else: 
+            self.label.setText(f'{screen}.')
+
     def press_but(self, pressed):
         if pressed == 'C':
             self.label.setText('0')
         else: 
-            if self.label.text() == '0':
-                self.label.setText('')
+            if self.label.text() == '0' and pressed == '0':
+                self.label.setText('0')
             else:
-                self.label.setText(f'{self.label.text()}{pressed}')
+                if self.label.text() == '0':
+                    self.label.setText(f'{pressed}')
+                else:
+                    self.label.setText(f'{self.label.text()}{pressed}')
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
