@@ -121,6 +121,14 @@ class Ui_MainWindow(object):
         self.button_eq.setSizePolicy(sizePolicy)
         self.button_eq.setObjectName("button_eq")
         self.gridLayout.addWidget(self.button_eq, 5, 0, 1, 1)
+        self.button_del = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_but('D'))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.button_del.sizePolicy().hasHeightForWidth())
+        self.button_del.setSizePolicy(sizePolicy)
+        self.button_del.setObjectName("button_del")
+        self.gridLayout.addWidget(self.button_del, 5, 1, 1, 1)
         self.button_7 = QtWidgets.QPushButton(self.gridLayoutWidget, clicked= lambda: self.press_but('7'))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -214,9 +222,12 @@ class Ui_MainWindow(object):
 
     def press_but(self, pressed):
         if pressed == 'C':
-            self.label.setText('')
+            self.label.setText('0')
         else: 
-            self.label.setText(f'{self.label.text()}{pressed}')
+            if self.label.text() == '0':
+                self.label.setText('')
+            else:
+                self.label.setText(f'{self.label.text()}{pressed}')
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -231,6 +242,7 @@ class Ui_MainWindow(object):
         self.button_5.setText(_translate("MainWindow", "5"))
         self.button_coma.setText(_translate("MainWindow", ","))
         self.button_clear.setText(_translate("MainWindow", "C"))
+        self.button_del.setText(_translate("MainWindow", "Del"))
         self.button_0.setText(_translate("MainWindow", "0"))
         self.button_eq.setText(_translate("MainWindow", "="))
         self.button_7.setText(_translate("MainWindow", "7"))
