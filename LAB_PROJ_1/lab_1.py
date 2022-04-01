@@ -9,8 +9,10 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QTimer,QDateTime
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+import datetime
 
 
 class Ui_MainWindow(object):
@@ -190,9 +192,11 @@ class Ui_MainWindow(object):
         self.AnalogClock = QwtAnalogClock(self.verticalLayoutWidget)
         self.AnalogClock.setLineWidth(4)
         self.AnalogClock.setObjectName("AnalogClock")
+        self.AnalogClock.setCurrentTime()
         self.verticalLayout.addWidget(self.AnalogClock)
         self.lcdNumber_2 = QtWidgets.QLCDNumber(self.verticalLayoutWidget)
         self.lcdNumber_2.setObjectName("lcdNumber_2")
+        self.lcdNumber_2.setDigitCount(8)
         self.verticalLayout.addWidget(self.lcdNumber_2)
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 10, 771, 161))
@@ -219,6 +223,21 @@ class Ui_MainWindow(object):
         self.checkBox.toggled['bool'].connect(self.AnalogClock.setVisible) # type: ignore
         self.checkBox_2.toggled['bool'].connect(self.lcdNumber_2.setVisible) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        #Timery dla zegaruf
+
+        self.timer=QTimer()
+        self.timer.timeout.connect(self.showTime)
+        self.timer.start(1000)
+
+    def showTime(self):
+        self.AnalogClock.repaint()
+        self.lcdNumber_2.repaint()
+        now = datetime.datetime.now()
+        t = str(now.hour) + ':' + str(now.minute) + ':' + str(now.second)
+        self.lcdNumber_2.display(t)
+        self.AnalogClock.setCurrentTime()
+
 
     #równa się 
     def press_eq(self):
