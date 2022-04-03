@@ -9,9 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import *
 from PyQt5.QtCore import QTimer,QDateTime
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+import random
 import datetime
 
 
@@ -177,9 +180,6 @@ class Ui_MainWindow(object):
         self.gridLayout_2 = QtWidgets.QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.checkBox = QtWidgets.QCheckBox(self.gridLayoutWidget_2)
-        self.checkBox.setObjectName("checkBox")
-        self.gridLayout_2.addWidget(self.checkBox, 0, 0, 1, 1)
         self.checkBox_2 = QtWidgets.QCheckBox(self.gridLayoutWidget_2)
         self.checkBox_2.setObjectName("checkBox_2")
         self.gridLayout_2.addWidget(self.checkBox_2, 1, 0, 1, 1)
@@ -189,15 +189,24 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.AnalogClock = QwtAnalogClock(self.verticalLayoutWidget)
-        self.AnalogClock.setLineWidth(4)
-        self.AnalogClock.setObjectName("AnalogClock")
-        self.AnalogClock.setCurrentTime()
-        self.verticalLayout.addWidget(self.AnalogClock)
+
+        self.graphicsView = Clock()
+        brush = QBrush(QColor(0,0,0,255))
+        brush.setStyle(Qt.SolidPattern)
+        self.verticalLayout.addWidget(self.graphicsView)
+
         self.lcdNumber_2 = QtWidgets.QLCDNumber(self.verticalLayoutWidget)
         self.lcdNumber_2.setObjectName("lcdNumber_2")
+
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.lcdNumber_2.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_2.setSizePolicy(sizePolicy1)
         self.lcdNumber_2.setDigitCount(8)
+        
         self.verticalLayout.addWidget(self.lcdNumber_2)
+        self.lcdNumber_2.setVisible(False)
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 10, 771, 161))
         self.label.setFrameShape(QtWidgets.QFrame.Box)
@@ -220,7 +229,6 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.checkBox.toggled['bool'].connect(self.AnalogClock.setVisible) # type: ignore
         self.checkBox_2.toggled['bool'].connect(self.lcdNumber_2.setVisible) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -231,12 +239,12 @@ class Ui_MainWindow(object):
         self.timer.start(1000)
 
     def showTime(self):
-        self.AnalogClock.repaint()
+#        self.AnalogClock.repaint()
         self.lcdNumber_2.repaint()
         now = datetime.datetime.now()
         t = str(now.hour) + ':' + str(now.minute) + ':' + str(now.second)
         self.lcdNumber_2.display(t)
-        self.AnalogClock.setCurrentTime()
+#        self.AnalogClock.setCurrentTime()
 
 
     #równa się 
@@ -300,8 +308,152 @@ class Ui_MainWindow(object):
         self.button_minus.setText(_translate("MainWindow", "-"))
         self.button_mul.setText(_translate("MainWindow", "x"))
         self.button_div.setText(_translate("MainWindow", "/"))
-        self.checkBox.setText(_translate("MainWindow", "Zegar cyfrowy"))
-        self.checkBox_2.setText(_translate("MainWindow", "Zegar analogowy"))
+        self.checkBox_2.setText(_translate("MainWindow", "Zegar cyfrowy"))
+
+class Clock(QWidget):
+  
+    # constructor
+    def __init__(self):
+        super().__init__()
+  
+        # creating a timer object
+        timer = QTimer(self)
+  
+        # adding action to the timer
+        # update the whole code
+        timer.timeout.connect(self.update)
+  
+        # setting start time of timer i.e 1 second
+        timer.start(1000)
+  
+        # setting window title
+        self.setWindowTitle('Clock')
+  
+        # setting window geometry
+        self.setGeometry(200, 200, 300, 300)
+  
+        # setting background color to the window
+        self.setStyleSheet("background : black;")
+  
+        # creating hour hand
+        self.hPointer = QtGui.QPolygon([QPoint(6, 7),
+                                        QPoint(-6, 7),
+                                        QPoint(0, -50)])
+  
+        # creating minute hand
+        self.mPointer = QPolygon([QPoint(6, 7),
+                                  QPoint(-6, 7),
+                                  QPoint(0, -70)])
+  
+        # creating second hand
+        self.sPointer = QPolygon([QPoint(1, 1),
+                                  QPoint(-1, 1),
+                                  QPoint(0, -90)])
+        # colors
+        # color for minute and hour hand
+        self.bColor = Qt.green
+  
+        # color for second hand
+        self.sColor = Qt.red
+  
+    # method for paint event
+    def paintEvent(self, event):
+  
+        # getting minimum of width and height
+        # so that clock remain square
+        rec = 200
+  
+        # getting current time
+        tik = QTime.currentTime()
+  
+        # creating a painter object
+        painter = QPainter(self)
+  
+  
+        # method to draw the hands
+        # argument : color rotation and which hand should be pointed
+        def drawPointer(color, rotation, pointer):
+  
+            # setting brush
+            painter.setBrush(QBrush(color))
+  
+            # saving painter
+            painter.save()
+  
+            # rotating painter
+            painter.rotate(rotation)
+  
+            # draw the polygon i.e hand
+            painter.drawConvexPolygon(pointer)
+  
+            # restore the painter
+            painter.restore()
+  
+  
+        # tune up painter
+        painter.setRenderHint(QPainter.Antialiasing)
+  
+        # translating the painter
+        painter.translate(self.width() / 2, self.height() / 2)
+  
+        # scale the painter
+        painter.scale(rec / 200, rec / 200)
+  
+        # set current pen as no pen
+        painter.setPen(QtCore.Qt.NoPen)
+  
+  
+        # draw each hand
+        drawPointer(self.bColor, (30 * (tik.hour() + tik.minute() / 60)), self.hPointer)
+        drawPointer(self.bColor, (6 * (tik.minute() + tik.second() / 60)), self.mPointer)
+        drawPointer(self.sColor, (6 * tik.second()), self.sPointer)
+  
+  
+        # drawing background
+        painter.setPen(QPen(self.bColor))
+  
+        # for loop
+        for i in range(0, 60):
+  
+            # drawing background lines
+            if (i % 5) == 0:
+                painter.drawLine(87, 0, 97, 0)
+  
+            # rotating the painter
+            painter.rotate(6)
+  
+        # ending the painter
+        painter.end()
+
+class Example(QWidget):
+    
+    def __init__(self):
+        super(Example, self).__init__()
+        
+        self.initUI()
+        
+    def initUI(self):      
+
+        self.setGeometry(300, 300, 280, 170)
+        self.setWindowTitle('Points')
+        self.show()
+
+    def paintEvent(self, e):
+
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        self.drawPoints(qp)
+        qp.end()
+        
+    def drawPoints(self, qp):
+      
+        qp.setPen(QtCore.Qt.red)
+        size = self.size()
+        
+        for i in range(1000):
+            x = random.randint(1, size.width()-1)
+            y = random.randint(1, size.height()-1)
+            qp.drawPoint(x, y)
 
 from PyQt5.Qwt import *
 
