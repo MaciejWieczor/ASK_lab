@@ -195,6 +195,7 @@ class Ui_MainWindow(object):
         brush.setStyle(Qt.SolidPattern)
         self.verticalLayout.addWidget(self.graphicsView)
 
+
         self.lcdNumber_2 = QtWidgets.QLCDNumber(self.verticalLayoutWidget)
         self.lcdNumber_2.setObjectName("lcdNumber_2")
 
@@ -204,6 +205,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.lcdNumber_2.sizePolicy().hasHeightForWidth())
         self.lcdNumber_2.setSizePolicy(sizePolicy1)
         self.lcdNumber_2.setDigitCount(8)
+        self.lcdNumber_2.setStyleSheet("background-color: rgb(255,0,0); margin:5px; border:1px solid rgb(0, 255, 0); ")
         
         self.verticalLayout.addWidget(self.lcdNumber_2)
         self.lcdNumber_2.setVisible(False)
@@ -219,6 +221,15 @@ class Ui_MainWindow(object):
         self.label.setScaledContents(False)
         self.label.setWordWrap(False)
         self.label.setObjectName("label")
+        self.design_1 = QPushButton(self.centralwidget, clicked = lambda: self.set_design_1())
+        self.design_1.setObjectName(u"design_1")
+        self.design_1.setGeometry(QRect(380, 470, 71, 61))
+        self.design_2 = QPushButton(self.centralwidget, clicked = lambda: self.set_design_2())
+        self.design_2.setObjectName(u"design_2")
+        self.design_2.setGeometry(QRect(460, 470, 71, 61))
+        self.design_3 = QPushButton(self.centralwidget, clicked = lambda: self.set_design_3())
+        self.design_3.setObjectName(u"design_3")
+        self.design_3.setGeometry(QRect(540, 470, 71, 61))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
@@ -237,6 +248,18 @@ class Ui_MainWindow(object):
         self.timer=QTimer()
         self.timer.timeout.connect(self.showTime)
         self.timer.start(1000)
+
+    def set_design_1(self):
+        self.lcdNumber_2.setStyleSheet("background : black")
+        self.graphicsView.setStyleSheet("background : black;")
+
+    def set_design_2(self):
+        self.lcdNumber_2.setStyleSheet("background : red")
+        self.graphicsView.setStyleSheet("background : red;")
+
+    def set_design_3(self):
+        self.lcdNumber_2.setStyleSheet("background : blue")
+        self.graphicsView.setStyleSheet("background : blue;")
 
     def showTime(self):
 #        self.AnalogClock.repaint()
@@ -309,6 +332,9 @@ class Ui_MainWindow(object):
         self.button_mul.setText(_translate("MainWindow", "x"))
         self.button_div.setText(_translate("MainWindow", "/"))
         self.checkBox_2.setText(_translate("MainWindow", "Zegar cyfrowy"))
+        self.design_1.setText(QCoreApplication.translate("MainWindow", u"1", None))
+        self.design_2.setText(QCoreApplication.translate("MainWindow", u"2", None))
+        self.design_3.setText(QCoreApplication.translate("MainWindow", u"3", None))
 
 class Clock(QWidget):
   
@@ -333,6 +359,7 @@ class Clock(QWidget):
         self.setGeometry(200, 200, 300, 300)
   
         # setting background color to the window
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         self.setStyleSheet("background : black;")
   
         # creating hour hand
@@ -351,10 +378,10 @@ class Clock(QWidget):
                                   QPoint(0, -90)])
         # colors
         # color for minute and hour hand
-        self.bColor = Qt.green
+        self.bColor = Qt.white
   
         # color for second hand
-        self.sColor = Qt.red
+        self.sColor = Qt.white
   
     # method for paint event
     def paintEvent(self, event):
